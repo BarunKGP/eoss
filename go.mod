@@ -1,0 +1,3 @@
+module eoss
+
+go 1.21.3
