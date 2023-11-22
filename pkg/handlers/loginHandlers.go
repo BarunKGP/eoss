@@ -6,7 +6,30 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 )
+
+func getRepoLanguages(ghData string) []string {
+	m := make(map[string]any)
+	err := json.Unmarshal([]byte(ghData), &m)
+	if err != nil {
+		log.Fatalf("Unable to unmarshal JSON: %s", err)
+	}
+
+	reposurl, ok := m["repos_url"]
+	if !ok {
+		log.Fatal("Unable to fetch repos_url from response")
+	}
+
+	reposUrl := reposurl.(string)
+	languages := getLanguages(string(reposUrl))
+	var languagesString []string
+	for _, language := range languages {
+		languagesString = append(languagesString, language.toString())
+	}
+
+	return languagesString
+}
 
 func LoggedinHandler(w http.ResponseWriter, r *http.Request, githubData string) {
 	if githubData == "" {
@@ -22,7 +45,8 @@ func LoggedinHandler(w http.ResponseWriter, r *http.Request, githubData string) 
 		log.Panic("JSON parse error")
 	}
 
-	fmt.Fprint(w, prettyJSON.String())
+	languages := getRepoLanguages(prettyJSON.String())
+	fmt.Fprint(w, strings.Join(languages, "\n"))
 }
 
 func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
@@ -33,12 +57,11 @@ func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 		githubClientId,
 		fmt.Sprintf("http://localhost:%s/login/github/callback", port))
 
-
 	http.Redirect(w, r, redirectURL, http.StatusMovedPermanently) // TODO: check status code
 }
 
 func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
-	
+
 	code := r.URL.Query().Get("code")
 	githubAccessToken := getGithubAccessToken(code)
 	githubData := getGithubData(githubAccessToken)

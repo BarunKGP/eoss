@@ -6,10 +6,13 @@ import (
 	"net/http"
 	"os"
 
-	"eoss/handlers"
+	"eoss/pkg/handlers"
 
 	"github.com/joho/godotenv"
 )
+
+// TODO: Implement client to avoid no timeout issues.
+// TODO: Refer: https://medium.com/@nate510/don-t-use-go-s-default-http-client-4804cb19f779
 
 func init() {
 	// loads values from .env into system

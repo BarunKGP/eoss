@@ -3,3 +3,4 @@
 .DS_Store
 go.sum
 tmp/*
+scratch.go
