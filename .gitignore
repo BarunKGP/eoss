@@ -1,3 +1,6 @@
-clientDetails.txt
+.env
 .vscode
 .DS_Store
+go.sum
+tmp/*
+scratch.go
