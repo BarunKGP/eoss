@@ -49,7 +49,7 @@ func LoggedinHandler(w http.ResponseWriter, r *http.Request, githubData string) 
 	fmt.Fprint(w, strings.Join(languages, "\n"))
 }
 
-func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
+func githubLoginHandler(w http.ResponseWriter, r *http.Request) {
 	githubClientId := getGithubClientId()
 	port := getPort()
 	redirectURL := fmt.Sprintf(
@@ -60,7 +60,7 @@ func GithubLoginHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, redirectURL, http.StatusMovedPermanently) // TODO: check status code
 }
 
-func GithubCallbackHandler(w http.ResponseWriter, r *http.Request) {
+func githubCallbackHandler(w http.ResponseWriter, r *http.Request) {
 
 	code := r.URL.Query().Get("code")
 	githubAccessToken := getGithubAccessToken(code)
