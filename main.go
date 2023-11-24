@@ -1,12 +1,11 @@
 package main
 
 import (
+	"eoss/pkg/handlers"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-
-	"eoss/pkg/handlers"
 
 	"github.com/joho/godotenv"
 )
