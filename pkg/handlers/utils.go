@@ -20,12 +20,12 @@ type reposResponse struct {
 	Rest        map[string]interface{} `json:"~"`
 }
 
-type languageType struct {
+type LanguageType struct {
 	Repo     string
 	Language map[string]int
 }
 
-func (lang *languageType) toString() string {
+func (lang *LanguageType) toString() string {
 	b := new(bytes.Buffer)
 	fmt.Fprintf(b, "Repo name: %s, Languages:\n", lang.Repo)
 	for key, value := range lang.Language {
@@ -124,7 +124,7 @@ func getGithubData(accessToken string) string {
 	return string(respbody)
 }
 
-func getLanguagesFromRepos(reposUrl string) []string {
+func getLanguagesFromRepoUrl(reposUrl string) []string {
 	req, err := http.NewRequest(
 		"GET",
 		reposUrl,
@@ -157,20 +157,23 @@ func getLanguagesFromRepos(reposUrl string) []string {
 func getRepoNameFromUrl(url string) string {
 	log.Printf("repo url =  %s", url)
 	parts := strings.Split(url, "/")
-	repoName := parts[len(parts) - 1]
+	if len(parts) < 2 {
+		log.Fatal("Malformed language url")
+	}
+	repoName := parts[len(parts) - 2]
 	return repoName
 }
 
-func getLanguages(reposUrl string) []languageType {
+func getLanguages(reposUrl string) []LanguageType {
 	// repos := getRepos(reposUrl)
 	// var reposJson []reposResponse
 	// if err := json.Unmarshal(repos, &reposJson); err != nil {
 	// 	log.Fatal("Malformed repos reponse")
 	// }
 
-	languageUrls := getLanguagesFromRepos(reposUrl)
+	languageUrls := getLanguagesFromRepoUrl(reposUrl)
 	
-	var languages []languageType
+	var languages []LanguageType
 	// for _, repo := range reposJson {
 	for _, langUrl := range languageUrls {
 		resp, err := http.Get(langUrl)
@@ -183,7 +186,7 @@ func getLanguages(reposUrl string) []languageType {
 		languageMap := make(map[string]int)
 		json.Unmarshal(body, &languageMap)
 
-		language := languageType{Repo: getRepoNameFromUrl(reposUrl), Language: languageMap}
+		language := LanguageType{Repo: getRepoNameFromUrl(langUrl), Language: languageMap}
 		languages = append(languages, language)
 	}
 
