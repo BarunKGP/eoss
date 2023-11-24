@@ -24,24 +24,10 @@ func init() {
 func main() {
 	fmt.Println("Hello world!")
 
-	http.HandleFunc("/", handlers.RootHandler)
-	http.HandleFunc("/login/github/", handlers.GithubLoginHandler)
-	http.HandleFunc("/login/github/callback", handlers.GithubCallbackHandler)
-	http.HandleFunc("/loggedin", func(w http.ResponseWriter, r *http.Request) {
-		handlers.LoggedinHandler(w, r, "")
-	})
-
+	router := http.HandlerFunc(handlers.Serve)
 	port := os.Getenv("PORT")
+
 	log.Panic(
-		http.ListenAndServe(":"+string(port), nil),
+		http.ListenAndServe(fmt.Sprintf(":%s", port), router),
 	)
 }
-
-
-// func loadEnvVars(key string) string {
-// 	err := godotenv.Load(".env")
-// 	if err != nil {
-// 		log.Fatalf("Error loading .env file")
-// 	}
-// 	return os.Getenv(key)
-// }
