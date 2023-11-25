@@ -9,7 +9,6 @@ type User struct {
 	Username      string
 	CreatedAt     time.Time
 	RepoLanguages []RepoLanguage
-	TopLanguages  []Language
 }
 
 func createUser(uname string, repoLanguages []RepoLanguage) *User {
@@ -21,7 +20,6 @@ func createUser(uname string, repoLanguages []RepoLanguage) *User {
     }
 
 	user := User{Username: uname, CreatedAt: time.Now(), RepoLanguages: repoLanguages}
-	user.TopLanguages = user.getTopLanguages(5)
 
 	return &user
 }
@@ -60,20 +58,6 @@ func (u User) getTopLanguages(k int) []Language {
     var langSlice = MapToLanguages(langLoc)
     SortTopLanguages(langSlice)
 
-    // type langSliceType struct {
-	// 	Lang    string
-	// 	LangLoc int
-	// }
-
-	// var langSlice = make([]langSliceType, len(langLoc))
-	// for k, v := range langLoc {
-        // 	langSlice = append(langSlice, langSliceType{k, v})
-        // }
-	// sort.SliceStable(langSlice, func(i, j int) bool {
-	// 	return langSlice[i].Loc > langSlice[j].Loc
-	// })
-
-    
 	var topLangs []Language
 	for i := 0; i < k; i++ {
 		log.Printf("Rank %d.  %s -> %f", i+1, langSlice[i].Name, float32(langSlice[i].Loc/sumLoc))
